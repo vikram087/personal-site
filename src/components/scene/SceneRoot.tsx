@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Suspense, useEffect, useState, type ReactNode } from 'react'
 import { SceneErrorBoundary } from '@/components/scene/SceneErrorBoundary'
 import { LoadingScreen } from '@/components/hud/LoadingScreen'
+import { SceneSettings } from '@/components/scene/SceneSettings'
 import type { DestinationNode } from '@/lib/content/scene-data'
 
 const SceneCanvas = dynamic(() => import('@/components/scene/SceneCanvas'), {
@@ -42,6 +43,7 @@ export function SceneRoot({
 
   return (
     <>
+      <SceneSettings />
       {webgl === null && <LoadingScreen />}
       {webgl === true && (
         <SceneErrorBoundary fallback={fallbackNotice}>
