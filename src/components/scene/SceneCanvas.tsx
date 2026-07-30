@@ -13,7 +13,6 @@ export default function SceneCanvas({ sceneData }: { sceneData: DestinationNode[
       dpr={tier === 'high' ? [1, 2] : 1}
       camera={{ position: [0, 0, 14], fov: 50 }}
       style={{ position: 'fixed', inset: 0 }}
-      aria-hidden
     >
       <color attach="background" args={['#060A12']} />
       <ambientLight intensity={0.25} />
