@@ -5,7 +5,7 @@ import { blogFrontmatter } from '@/lib/content/schemas'
 
 export default function DestinationsPage() {
   const data = buildSceneData()
-  const posts: any = loadCollection('blog', blogFrontmatter as any)
+  const posts = loadCollection('blog', blogFrontmatter)
   return (
     <main className="panel-body" style={{ maxWidth: 720, margin: '0 auto', height: '100dvh' }}>
       <p className="kicker">Destination index</p>
@@ -27,7 +27,7 @@ export default function DestinationsPage() {
       <section>
         <h2 style={{ marginTop: '1.5em' }}>All posts</h2>
         <ul>
-          {posts.map((p: any) => (
+          {posts.map((p) => (
             <li key={p.slug}>
               <Link href={`/blog/${p.frontmatter.topic}/${p.slug}`}>{p.frontmatter.title}</Link>
             </li>

@@ -1,14 +1,14 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
-import type { ZodType } from 'zod'
+import type { ZodType, ZodTypeDef } from 'zod'
 import { pageFrontmatter, type PageFrontmatter } from '@/lib/content/schemas'
 
 export type Entry<T> = { slug: string; frontmatter: T; body: string }
 
 const defaultRoot = () => path.join(process.cwd(), 'content')
 
-function parseFile<T>(filePath: string, label: string, schema: ZodType<T>): { frontmatter: T; body: string } {
+function parseFile<T>(filePath: string, label: string, schema: ZodType<T, ZodTypeDef, unknown>): { frontmatter: T; body: string } {
   const raw = fs.readFileSync(filePath, 'utf8')
   const { data, content } = matter(raw)
   const parsed = schema.safeParse(data)
@@ -20,7 +20,7 @@ function parseFile<T>(filePath: string, label: string, schema: ZodType<T>): { fr
 
 export function loadCollection<T extends { date: Date; draft: boolean }>(
   dir: string,
-  schema: ZodType<T>,
+  schema: ZodType<T, ZodTypeDef, unknown>,
   root: string = defaultRoot(),
 ): Entry<T>[] {
   const collectionDir = path.join(root, dir)

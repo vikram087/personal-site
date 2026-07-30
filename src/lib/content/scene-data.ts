@@ -20,8 +20,7 @@ function staticCity(planetSlug: string, city: CityDef): CityNode {
 }
 
 function hobbyCities(root?: string): CityNode[] {
-  const hobbies: any = loadCollection('hobbies', hobbyFrontmatter as any, root)
-  return hobbies.map((e: any) => ({
+  return loadCollection('hobbies', hobbyFrontmatter, root).map((e) => ({
     slug: e.slug,
     name: e.frontmatter.title,
     descriptor: e.frontmatter.summary,
@@ -31,11 +30,11 @@ function hobbyCities(root?: string): CityNode[] {
 }
 
 function blogTopicCities(root?: string): CityNode[] {
-  const posts: any = loadCollection('blog', blogFrontmatter as any, root)
-  return deriveTopics(posts).map((topic: any) => ({
+  const posts = loadCollection('blog', blogFrontmatter, root)
+  return deriveTopics(posts).map((topic) => ({
     slug: topic,
     name: topic,
-    descriptor: `${posts.filter((p: any) => p.frontmatter.topic === topic).length} transmissions`,
+    descriptor: `${posts.filter((p) => p.frontmatter.topic === topic).length} transmissions`,
     ...slugToLatLng(topic),
     href: `/blog/${topic}`,
   }))
