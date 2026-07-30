@@ -30,9 +30,11 @@ const fallbackNotice = (
 
 export function SceneRoot({
   sceneData,
+  hud,
   children,
 }: {
   sceneData: DestinationNode[]
+  hud?: ReactNode
   children: ReactNode
 }) {
   const [webgl, setWebgl] = useState<boolean | null>(null)
@@ -49,6 +51,7 @@ export function SceneRoot({
         </SceneErrorBoundary>
       )}
       {webgl === false && fallbackNotice}
+      {hud}
       <div style={{ position: 'fixed', inset: 0, zIndex: 10, pointerEvents: 'none' }}>{children}</div>
     </>
   )
