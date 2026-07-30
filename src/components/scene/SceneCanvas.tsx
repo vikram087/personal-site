@@ -1,6 +1,8 @@
 'use client'
 import { Canvas } from '@react-three/fiber'
 import { Starfield } from '@/components/scene/Starfield'
+import { DestinationField } from '@/components/scene/DestinationField'
+import { CameraRig } from '@/components/scene/CameraRig'
 import { useSceneStore } from '@/lib/store'
 import type { DestinationNode } from '@/lib/content/scene-data'
 
@@ -17,7 +19,8 @@ export default function SceneCanvas({ sceneData }: { sceneData: DestinationNode[
       <ambientLight intensity={0.25} />
       <directionalLight position={[10, 8, 6]} intensity={1.1} />
       <Starfield />
-      {/* Task 9: <DestinationField sceneData={sceneData} /> + <CameraRig sceneData={sceneData} /> */}
+      <DestinationField sceneData={sceneData} />
+      <CameraRig sceneData={sceneData} />
     </Canvas>
   )
 }
