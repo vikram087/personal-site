@@ -14,10 +14,15 @@ test('director → planet → city → content', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Work' })).toBeVisible()
 })
 
-test('direct URL to a blog post renders the reading panel', async ({ page }) => {
-  await page.goto('/blog/meta/hello-world')
-  await expect(page.getByRole('heading', { name: 'Hello World' })).toBeVisible()
-  await expect(page.getByText('Welcome aboard')).toBeVisible()
+test('direct URL to a hobby renders its panel', async ({ page }) => {
+  await page.goto('/hobbies/soccer')
+  await expect(page.getByRole('heading', { name: 'Soccer' })).toBeVisible()
+  await expect(page.getByText('Homestead High School')).toBeVisible()
+})
+
+test('blog planet shows the coming-soon panel while empty', async ({ page }) => {
+  await page.goto('/blog')
+  await expect(page.getByRole('heading', { name: 'Transmissions coming soon' })).toBeVisible()
 })
 
 test('HUD About tabs and Contact work from any view', async ({ page }) => {

@@ -72,6 +72,17 @@ h1, h2, h3, .display {
   color: var(--ghost);
   text-transform: none;
 }
+.nameplate span { white-space: nowrap; }
+.nameplate .descriptor { max-width: 230px; overflow: hidden; text-overflow: ellipsis; }
+
+/* Marker variant: dark chip keeps text legible over bright planet surfaces */
+.nameplate--marker {
+  background: color-mix(in srgb, var(--abyss) 72%, transparent);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--line);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+.nameplate--marker .descriptor { color: #B9C2D4; }
 
 /* Panel frame */
 .panel {
@@ -118,8 +129,73 @@ h1, h2, h3, .display {
 
 :focus-visible { outline: 1px solid var(--starlight); outline-offset: 3px; }
 
+/* Wayfinding bar — top center, always shows the route out of a view */
+.location-bar {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+  animation: bar-drop-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.location-bar .location-name { color: var(--starlight); white-space: nowrap; }
+/* With a panel open, center the bar over the visible scene area, below the HUD nav */
+.location-bar--panel-open { left: calc((100% - var(--panel-width)) / 2); top: 64px; }
+.location-bar .esc-hint {
+  border: 1px solid var(--line);
+  padding: 3px 7px;
+  font-size: 0.6rem;
+}
+
+/* Instrument-frame corner ticks around the viewport */
+.viewport-frame { position: fixed; inset: 10px; z-index: 5; pointer-events: none; }
+.viewport-frame span { position: absolute; width: 18px; height: 18px; opacity: 0.5; }
+.viewport-frame span:nth-child(1) { top: 0; left: 0; border-top: 1px solid var(--starlight); border-left: 1px solid var(--starlight); }
+.viewport-frame span:nth-child(2) { top: 0; right: 0; border-top: 1px solid var(--starlight); border-right: 1px solid var(--starlight); }
+.viewport-frame span:nth-child(3) { bottom: 0; left: 0; border-bottom: 1px solid var(--starlight); border-left: 1px solid var(--starlight); }
+.viewport-frame span:nth-child(4) { bottom: 0; right: 0; border-bottom: 1px solid var(--starlight); border-right: 1px solid var(--starlight); }
+
+/* Nameplates materialize as the scene settles */
+.nameplate { animation: fade-drop-in 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* Loading screen */
+.loading-diamond {
+  width: 18px;
+  height: 18px;
+  margin: 0 auto 18px;
+  border: 1px solid var(--starlight);
+  transform: rotate(45deg);
+  animation: diamond-pulse 1.6s ease-in-out infinite;
+}
+.loading-text { animation: loading-breathe 1.6s ease-in-out infinite; }
+
+@keyframes fade-drop-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes bar-drop-in {
+  from { opacity: 0; transform: translate(-50%, -6px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes diamond-pulse {
+  0%, 100% { transform: rotate(45deg) scale(1); opacity: 1; }
+  50% { transform: rotate(45deg) scale(0.72); opacity: 0.45; }
+}
+@keyframes loading-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
 @media (max-width: 768px) {
   :root { --panel-width: 100vw; }
+  .location-bar { top: auto; bottom: 18px; }
+  .location-bar .esc-hint { display: none; }
+  /* Full-screen panel already carries its own back link */
+  .location-bar--panel-open { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

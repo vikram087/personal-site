@@ -25,16 +25,18 @@ export default function DestinationsPage() {
             </ul>
           </section>
         ))}
-        <section>
-          <h2 style={{ marginTop: '1.5em' }}>All posts</h2>
-          <ul>
-            {posts.map((p) => (
-              <li key={p.slug}>
-                <Link href={`/blog/${p.frontmatter.topic}/${p.slug}`}>{p.frontmatter.title}</Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {posts.length > 0 && (
+          <section>
+            <h2 style={{ marginTop: '1.5em' }}>All posts</h2>
+            <ul>
+              {posts.map((p) => (
+                <li key={p.slug}>
+                  <Link href={`/blog/${p.frontmatter.topic}/${p.slug}`}>{p.frontmatter.title}</Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </main>
     </div>
   )

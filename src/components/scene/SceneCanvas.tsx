@@ -1,11 +1,27 @@
 'use client'
 import { Canvas, type RootState } from '@react-three/fiber'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { useTexture } from '@react-three/drei'
 import { Starfield } from '@/components/scene/Starfield'
+import { NebulaBackdrop } from '@/components/scene/NebulaBackdrop'
+import { Effects } from '@/components/scene/Effects'
 import { DestinationField } from '@/components/scene/DestinationField'
 import { CameraRig } from '@/components/scene/CameraRig'
+import { SUN_DIRECTION } from '@/components/scene/PlanetMaterial'
+import { DESTINATIONS } from '@/config/destinations'
 import { useSceneStore } from '@/lib/store'
 import type { DestinationNode } from '@/lib/content/scene-data'
+
+// Warm every texture during the loading screen so destination views never
+// pop in behind Suspense.
+const PLANET_TEXTURE_URLS = DESTINATIONS.filter((d) => d.kind === 'planet').flatMap((d) => [
+  `/textures/${d.slug}-albedo.webp`,
+  `/textures/${d.slug}-normal.webp`,
+  `/textures/${d.slug}-emissive.webp`,
+])
+;[...PLANET_TEXTURE_URLS, '/textures/clouds.webp', '/textures/sky.webp'].forEach((url) => {
+  useTexture.preload(url)
+})
 
 // Spec: "WebGL context lost: attempt one recovery, then fall back to index."
 const RESTORE_TIMEOUT_MS = 3000
@@ -23,6 +39,7 @@ export default function SceneCanvas({
   const restoreTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleCreated = useCallback((state: RootState) => {
+    state.gl.toneMappingExposure = 1.18
     setCanvasEl(state.gl.domElement)
   }, [])
 
@@ -70,11 +87,21 @@ export default function SceneCanvas({
       onCreated={handleCreated}
     >
       <color attach="background" args={['#060A12']} />
-      <ambientLight intensity={0.25} />
-      <directionalLight position={[10, 8, 6]} intensity={1.1} />
-      <Starfield />
-      <DestinationField sceneData={sceneData} />
+      <ambientLight intensity={0.16} color="#8FA3C8" />
+      {/* Key light matches SUN_DIRECTION so shader terminators agree with mesh lighting. */}
+      <directionalLight
+        position={[SUN_DIRECTION.x * 20, SUN_DIRECTION.y * 20, SUN_DIRECTION.z * 20]}
+        intensity={1.5}
+        color="#FFF1DE"
+      />
+      <directionalLight position={[-12, -4, -10]} intensity={0.25} color="#4A5F8A" />
+      <Suspense fallback={null}>
+        <NebulaBackdrop />
+        <Starfield />
+        <DestinationField sceneData={sceneData} />
+      </Suspense>
       <CameraRig sceneData={sceneData} />
+      <Effects />
     </Canvas>
   )
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { slugToLatLng, latLngToVector3 } from '@/lib/geo'
+import { slugToLatLng, latLngToVector3, frontHemisphereLng } from '@/lib/geo'
 
 describe('slugToLatLng', () => {
   it('is deterministic', () => {
@@ -15,6 +15,30 @@ describe('slugToLatLng', () => {
       expect(lat).toBeLessThanOrEqual(50)
       expect(lng).toBeGreaterThanOrEqual(-180)
       expect(lng).toBeLessThan(180)
+    }
+  })
+})
+
+describe('frontHemisphereLng', () => {
+  it('centers a single marker on the camera-facing meridian', () => {
+    expect(frontHemisphereLng(0, 1)).toBe(-90)
+  })
+  it('spreads three markers evenly around the center', () => {
+    expect([0, 1, 2].map((i) => frontHemisphereLng(i, 3))).toEqual([-135, -90, -45])
+  })
+  it('keeps every marker on the camera-facing hemisphere', () => {
+    for (let count = 1; count <= 8; count += 1) {
+      for (let i = 0; i < count; i += 1) {
+        const lng = frontHemisphereLng(i, count)
+        expect(lng).toBeGreaterThan(-180)
+        expect(lng).toBeLessThan(0)
+      }
+    }
+  })
+  it('produces camera-facing 3D positions (positive z)', () => {
+    for (const i of [0, 1, 2, 3]) {
+      const [, , z] = latLngToVector3(20, frontHemisphereLng(i, 4), 1.45)
+      expect(z).toBeGreaterThan(0)
     }
   })
 })

@@ -1,0 +1,22 @@
+---
+title: MatSearch — Institute for Complex Adaptive Matter
+summary: AI-powered search over 50,000+ materials science papers.
+date: 2024-01-15
+org: Institute for Complex Adaptive Matter
+role: Software Engineer
+period: Jan 2024 – May 2024, Oct 2024 – Jan 2025
+---
+
+Led architecture and development of MatSearch, a searchable materials science
+paper database serving 20 internal researchers.
+
+- Developed an AI-powered ingestion pipeline using Python to pull ArXiv
+  papers, Kafka to stream them to a MatBERT-NER service for NLP analysis, and
+  Elasticsearch to store and index documents.
+- Engineered a Flask backend using AI vector search with sentence-transformer
+  embeddings — searching 50,000+ documents with sub-second latency, with hot
+  documents cached in Redis.
+- Orchestrated and deployed the frontend, backend, Elasticsearch, models, and
+  Redis on Amazon EKS (Kubernetes) for consistent, scalable deployments.
+
+Source: [github.com/vikram087/matsearch](https://github.com/vikram087/matsearch)

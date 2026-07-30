@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Suspense, useCallback, useEffect, useState, type ReactNode } from 'react'
 import { SceneErrorBoundary } from '@/components/scene/SceneErrorBoundary'
 import { LoadingScreen } from '@/components/hud/LoadingScreen'
+import { LocationBar } from '@/components/hud/LocationBar'
 import { SceneSettings } from '@/components/scene/SceneSettings'
 import type { DestinationNode } from '@/lib/content/scene-data'
 
@@ -63,6 +64,10 @@ export function SceneRoot({
       )}
       {(webgl === false || contextFatal) && fallbackNotice}
       {hud}
+      {showScene && <LocationBar sceneData={sceneData} />}
+      <div className="viewport-frame" aria-hidden>
+        <span /><span /><span /><span />
+      </div>
       <div style={{ position: 'fixed', inset: 0, zIndex: 10, pointerEvents: 'none' }}>{children}</div>
     </>
   )

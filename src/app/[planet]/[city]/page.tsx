@@ -6,6 +6,8 @@ import { BlogTopicPanel } from '@/components/panels/BlogTopicPanel'
 import { ComingSoonPanel } from '@/components/hud/ComingSoonPanel'
 import { SITE_METADATA } from '@/config/site-metadata'
 
+export const dynamicParams = false
+
 export function generateStaticParams() {
   return buildSceneData()
     .filter((d) => d.slug !== 'education')

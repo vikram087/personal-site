@@ -24,7 +24,7 @@ export function EntryListPanel({ city }: { city: keyof typeof CITY_META }) {
           <article key={e.slug} style={{ marginBottom: '2.5rem' }}>
             <h2 style={{ fontSize: '1.05rem' }}>{fm.title}</h2>
             {'org' in fm && (
-              <p className="kicker" style={{ margin: '4px 0' }}>{fm.org} · {fm.role} · {fm.period}</p>
+              <p className="kicker" style={{ margin: '4px 0' }}>{fm.role} · {fm.period}</p>
             )}
             <p className="kicker" style={{ margin: '4px 0 12px' }}>{fm.summary}</p>
             <Mdx source={e.body} />

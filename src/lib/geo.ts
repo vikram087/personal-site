@@ -14,6 +14,21 @@ export function slugToLatLng(slug: string): { lat: number; lng: number } {
   return { lat, lng }
 }
 
+/**
+ * Display longitude for the i-th of `count` city markers, spread evenly across
+ * the camera-facing hemisphere. The destination camera looks at the planet from
+ * +Z, which latLngToVector3 maps to lng = -90; markers fan out around it (max
+ * spread 120°) so every marker is visible at once regardless of how the planet
+ * surface rotates beneath them.
+ */
+export function frontHemisphereLng(index: number, count: number): number {
+  const CENTER = -90
+  if (count <= 1) return CENTER
+  const spacing = Math.min(45, 120 / (count - 1))
+  const span = spacing * (count - 1)
+  return CENTER - span / 2 + index * spacing
+}
+
 export function latLngToVector3(lat: number, lng: number, radius: number): [number, number, number] {
   const phi = ((90 - lat) * Math.PI) / 180
   const theta = ((lng + 180) * Math.PI) / 180

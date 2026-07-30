@@ -1,5 +1,5 @@
 'use client'
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { AnimatePresence } from 'framer-motion'
 import { Panel } from '@/components/hud/Panel'
@@ -20,6 +20,19 @@ export function HudChrome({
 }) {
   const [overlay, setOverlay] = useState<Overlay>(null)
   const [tab, setTab] = useState<AboutTab>('about')
+
+  // An open overlay consumes Escape (capture phase) so it closes the panel
+  // instead of reaching SceneSettings' route-up navigation handler.
+  useEffect(() => {
+    if (!overlay) return undefined
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      e.stopPropagation()
+      setOverlay(null)
+    }
+    window.addEventListener('keydown', onKey, { capture: true })
+    return () => window.removeEventListener('keydown', onKey, { capture: true })
+  }, [overlay])
   const tabs: { id: AboutTab; label: string; content: ReactNode }[] = [
     { id: 'about', label: 'About', content: about },
     { id: 'now', label: 'Now', content: now },
