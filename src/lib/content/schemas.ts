@@ -8,7 +8,9 @@ export const baseFrontmatter = z.object({
 })
 
 export const blogFrontmatter = baseFrontmatter.extend({
-  topic: z.string().min(1),
+  topic: z
+    .string()
+    .regex(/^[a-z0-9-]+$/, 'topic must be a url-safe slug (lowercase letters, digits, dashes)'),
 })
 
 export const workFrontmatter = baseFrontmatter.extend({

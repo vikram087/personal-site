@@ -1,7 +1,7 @@
 'use client'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { Suspense, useEffect, useState, type ReactNode } from 'react'
+import { Suspense, useCallback, useEffect, useState, type ReactNode } from 'react'
 import { SceneErrorBoundary } from '@/components/scene/SceneErrorBoundary'
 import { LoadingScreen } from '@/components/hud/LoadingScreen'
 import { SceneSettings } from '@/components/scene/SceneSettings'
@@ -39,20 +39,29 @@ export function SceneRoot({
   children: ReactNode
 }) {
   const [webgl, setWebgl] = useState<boolean | null>(null)
+  const [contextFatal, setContextFatal] = useState(false)
   useEffect(() => setWebgl(webglSupported()), [])
+
+  // Spec: "WebGL context lost: attempt one recovery, then fall back to index."
+  // SceneCanvas gives the recovery attempt a bounded window; once it gives up
+  // (second loss or restore timeout), it calls this to drop us to the same
+  // fallback notice used when WebGL isn't supported at all.
+  const handleContextFatal = useCallback(() => setContextFatal(true), [])
+
+  const showScene = webgl === true && !contextFatal
 
   return (
     <>
       <SceneSettings />
       {webgl === null && <LoadingScreen />}
-      {webgl === true && (
+      {showScene && (
         <SceneErrorBoundary fallback={fallbackNotice}>
           <Suspense fallback={<LoadingScreen />}>
-            <SceneCanvas sceneData={sceneData} />
+            <SceneCanvas sceneData={sceneData} onContextFatal={handleContextFatal} />
           </Suspense>
         </SceneErrorBoundary>
       )}
-      {webgl === false && fallbackNotice}
+      {(webgl === false || contextFatal) && fallbackNotice}
       {hud}
       <div style={{ position: 'fixed', inset: 0, zIndex: 10, pointerEvents: 'none' }}>{children}</div>
     </>

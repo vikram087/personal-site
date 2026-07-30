@@ -26,6 +26,9 @@ describe('blogFrontmatter', () => {
     expect(() => blogFrontmatter.parse(valid)).toThrow()
     expect(blogFrontmatter.parse({ ...valid, topic: 'dev' }).topic).toBe('dev')
   })
+  it('rejects topics that are not url-safe slugs', () => {
+    expect(() => blogFrontmatter.parse({ ...valid, topic: 'My Life' })).toThrow()
+  })
 })
 
 describe('workFrontmatter', () => {

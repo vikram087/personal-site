@@ -65,3 +65,9 @@ export const DESTINATIONS: DestinationDef[] = [
 ]
 
 export const PLANET_SLUGS = DESTINATIONS.map((d) => d.slug)
+
+export function accentOf(slug: string): string {
+  const destination = DESTINATIONS.find((d) => d.slug === slug)
+  if (!destination) throw new Error(`Unknown destination slug: ${slug}`)
+  return destination.accent
+}

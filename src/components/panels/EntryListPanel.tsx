@@ -1,6 +1,7 @@
 import { loadCollection, type Entry } from '@/lib/content/loader'
 import { workFrontmatter, projectFrontmatter, baseFrontmatter } from '@/lib/content/schemas'
 import type { WorkFrontmatter, ProjectFrontmatter, BaseFrontmatter } from '@/lib/content/schemas'
+import { accentOf } from '@/config/destinations'
 import { Panel } from '@/components/hud/Panel'
 import { Mdx } from '@/components/panels/Mdx'
 
@@ -16,7 +17,7 @@ export function EntryListPanel({ city }: { city: keyof typeof CITY_META }) {
     WorkFrontmatter | ProjectFrontmatter | BaseFrontmatter
   >[]
   return (
-    <Panel accent="#F5A83C" kicker={`Professional · ${meta.title}`} title={meta.title} backHref="/professional">
+    <Panel accent={accentOf('professional')} kicker={`Professional · ${meta.title}`} title={meta.title} backHref="/professional">
       {entries.map((e) => {
         const fm = e.frontmatter
         return (

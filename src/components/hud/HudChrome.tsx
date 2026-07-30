@@ -47,7 +47,7 @@ export function HudChrome({
       </nav>
       <AnimatePresence>
         {overlay === 'about' && (
-          <Panel accent="#E9EDF5" kicker="Guardian file" title="About">
+          <Panel accent="var(--starlight)" kicker="Guardian file" title="About">
             <div role="tablist" aria-label="About sections" style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
               {tabs.map((t) => (
                 <button
@@ -70,7 +70,7 @@ export function HudChrome({
           </Panel>
         )}
         {overlay === 'contact' && (
-          <Panel accent="#E9EDF5" kicker="Open a channel" title="Contact">
+          <Panel accent="var(--starlight)" kicker="Open a channel" title="Contact">
             <button type="button" className="hud-button" onClick={() => setOverlay(null)} style={{ position: 'absolute', top: 24, right: 24 }}>
               Close
             </button>

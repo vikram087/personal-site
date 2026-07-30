@@ -5,12 +5,10 @@ import { buildSceneData } from '@/lib/content/scene-data'
 import { HudChrome } from '@/components/hud/HudChrome'
 import { loadPage } from '@/lib/content/loader'
 import { Mdx } from '@/components/panels/Mdx'
+import { SITE_METADATA } from '@/config/site-metadata'
 import './globals.css'
 
-export const metadata = {
-  title: 'Vikram Penumarti — Starmap',
-  description: 'Personal site: education, work, hobbies, and writing, charted as destinations.',
-}
+export const metadata = SITE_METADATA
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const sceneData = buildSceneData()

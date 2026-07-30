@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { DESTINATIONS, PLANET_SLUGS } from '@/config/destinations'
+import { DESTINATIONS, PLANET_SLUGS, accentOf } from '@/config/destinations'
 
 describe('DESTINATIONS', () => {
   it('contains the five destinations from the spec', () => {
@@ -25,5 +25,15 @@ describe('DESTINATIONS', () => {
     expect(tower?.cities).toEqual([
       { slug: 'feed', name: 'Live Feed', descriptor: 'Transmission offline — coming soon' },
     ])
+  })
+})
+
+describe('accentOf', () => {
+  it('returns the accent for a known destination slug', () => {
+    expect(accentOf('education')).toBe('#5B9DFF')
+    expect(accentOf('blog')).toBe('#9F6BFF')
+  })
+  it('throws for an unknown slug', () => {
+    expect(() => accentOf('nope')).toThrow()
   })
 })
