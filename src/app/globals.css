@@ -240,7 +240,7 @@ h1, h2, h3, .display {
   .location-bar--panel-open { display: none; }
   /* Starmap labels are fixed-px DOM: shrink them so the pixel budget
      reserved by camera-fit (NAMEPLATE_HALF_WIDTH_PX) is honest */
-  .nameplate { font-size: 0.7rem; padding: 10px 8px; margin: -6px -2px; }
+  .nameplate { font-size: 0.7rem; padding: 10px 8px; margin: -6px -2px; min-height: 44px; justify-content: center; }
   .nameplate .descriptor { font-size: 0.55rem; max-width: 104px; }
 }
 

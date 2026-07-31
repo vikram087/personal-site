@@ -22,6 +22,7 @@ test('starmap shows every destination nameplate within the viewport', async ({ p
     expect(box!.y, `nameplate ${i} top edge`).toBeGreaterThanOrEqual(0)
     expect(box!.x + box!.width, `nameplate ${i} right edge`).toBeLessThanOrEqual(VIEWPORT.width)
     expect(box!.y + box!.height, `nameplate ${i} bottom edge`).toBeLessThanOrEqual(VIEWPORT.height)
+    expect(box!.height, `nameplate ${i} tap height`).toBeGreaterThanOrEqual(44)
   }
 })
 
