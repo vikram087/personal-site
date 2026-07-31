@@ -36,13 +36,14 @@ export function CameraRig({ sceneData }: { sceneData: DestinationNode[] }) {
       sceneData.map((d) => d.position),
       SCENE_FOV,
       aspect,
+      { width: size.width, height: size.height },
     )
     const scale = focusOffsetScale(SCENE_FOV, aspect)
     return {
       overviewPos: new THREE.Vector3(0, 0, distance),
       focusOffset: new THREE.Vector3(...BASE_FOCUS_OFFSET).multiplyScalar(scale),
     }
-  }, [sceneData, aspect])
+  }, [sceneData, aspect, size])
 
   useFrame((state, delta) => {
     const focused = target.view === 'director' ? null : sceneData.find((d) => d.slug === target.planet)

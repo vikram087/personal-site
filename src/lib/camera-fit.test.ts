@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   BASE_FOCUS_OFFSET,
   FOCUS_FIT_RADIUS,
+  NAMEPLATE_HALF_WIDTH_PX,
   NAMEPLATE_MARGIN,
   OVERVIEW_MAX_DISTANCE,
   OVERVIEW_MIN_DISTANCE,
@@ -55,6 +56,27 @@ describe('overviewDistance', () => {
       expect(d).toBeGreaterThanOrEqual(OVERVIEW_MIN_DISTANCE)
       expect(d).toBeLessThanOrEqual(OVERVIEW_MAX_DISTANCE)
     }
+  })
+
+  it('reserves NAMEPLATE_HALF_WIDTH_PX of screen margin per side when given a portrait viewport', () => {
+    const aspect = 390 / 844
+    const viewport = { width: 390, height: 844 }
+    const d = overviewDistance(POSITIONS, SCENE_FOV, aspect, viewport)
+    const tanH = tanHalf(SCENE_FOV) * aspect
+    const budget = tanH * (1 - (2 * NAMEPLATE_HALF_WIDTH_PX) / viewport.width)
+    for (const [x, , z] of POSITIONS) {
+      expect((Math.abs(x) + NAMEPLATE_MARGIN) / (d - z)).toBeLessThanOrEqual(budget + 1e-9)
+    }
+  })
+
+  it('keeps the desktop invariant (distance 14) even when a desktop viewport is passed', () => {
+    expect(overviewDistance(POSITIONS, SCENE_FOV, 16 / 9, { width: 1440, height: 810 })).toBe(14)
+  })
+
+  it('stays finite and within the ceiling for an absurdly narrow viewport', () => {
+    const d = overviewDistance(POSITIONS, SCENE_FOV, 390 / 844, { width: 100, height: 844 })
+    expect(Number.isFinite(d)).toBe(true)
+    expect(d).toBeLessThanOrEqual(OVERVIEW_MAX_DISTANCE)
   })
 })
 
