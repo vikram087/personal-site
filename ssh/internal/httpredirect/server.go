@@ -24,8 +24,3 @@ func Server(addr, target string) *http.Server {
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 }
-
-// ListenAndServe blocks serving the redirect on addr.
-func ListenAndServe(addr, target string) error {
-	return Server(addr, target).ListenAndServe()
-}

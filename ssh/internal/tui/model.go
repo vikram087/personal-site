@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/viewport"
@@ -159,8 +160,13 @@ func renderEntry(e content.Entry, width int) string {
 		b.WriteString(dimStyle.Render(line) + "\n")
 	}
 	b.WriteString("\n" + renderMarkdown(e.Body, width))
-	for name, url := range e.Meta.Links {
-		b.WriteString("\n" + dimStyle.Render(name+": "+url))
+	names := make([]string, 0, len(e.Meta.Links))
+	for name := range e.Meta.Links {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		b.WriteString("\n" + dimStyle.Render(name+": "+e.Meta.Links[name]))
 	}
 	return b.String()
 }

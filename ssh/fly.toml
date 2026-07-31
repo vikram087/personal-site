@@ -1,5 +1,6 @@
 app = "vik-run"
 primary_region = "sjc"
+kill_timeout = "15s"
 
 [env]
   SSH_PORT = "2222"

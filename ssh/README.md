@@ -52,5 +52,6 @@ context):
 fly deploy . --config ssh/fly.toml --dockerfile ssh/Dockerfile --remote-only
 ```
 
-Verify: `ssh vik.run` shows the TUI; `curl -I http://vik.run` returns a
-redirect to https://vikram.sh.
+Verify: `ssh vik.run` shows the TUI; `curl -I https://vik.run` returns a
+redirect to https://vikram.sh (with `force_https = true`, plain
+`http://vik.run` first hits Fly's edge redirect to https://vik.run).
