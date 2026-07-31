@@ -11,6 +11,7 @@ import { DestinationField } from '@/components/scene/DestinationField'
 import { CameraRig } from '@/components/scene/CameraRig'
 import { SUN_DIRECTION } from '@/components/scene/PlanetMaterial'
 import { DESTINATIONS } from '@/config/destinations'
+import { SCENE_FOV } from '@/lib/camera-fit'
 import { useSceneStore } from '@/lib/store'
 import type { DestinationNode } from '@/lib/content/scene-data'
 
@@ -114,7 +115,7 @@ export default function SceneCanvas({
   return (
     <Canvas
       dpr={tier === 'high' ? [1, 2] : 1}
-      camera={{ position: [0, 0, 14], fov: 50 }}
+      camera={{ position: [0, 0, 14], fov: SCENE_FOV }}
       style={{ position: 'fixed', inset: 0 }}
       onCreated={handleCreated}
       onPointerMissed={handlePointerMissed}
