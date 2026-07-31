@@ -11,6 +11,7 @@ import { DestinationField } from '@/components/scene/DestinationField'
 import { CameraRig } from '@/components/scene/CameraRig'
 import { SUN_DIRECTION } from '@/components/scene/PlanetMaterial'
 import { DESTINATIONS } from '@/config/destinations'
+import { SCENE_FOV } from '@/lib/camera-fit'
 import { useSceneStore } from '@/lib/store'
 import type { DestinationNode } from '@/lib/content/scene-data'
 
@@ -52,7 +53,10 @@ export default function SceneCanvas({
     (e: MouseEvent) => {
       if (pathname === '/' || e.target !== canvasEl) return
       const down = pointerDownRef.current
-      if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 8) return
+      // Touch drags wobble more than mouse drags — give coarse pointers a
+      // larger tap threshold so drag-rotation is never read as a dismissal.
+      const threshold = window.matchMedia('(pointer: coarse)').matches ? 12 : 8
+      if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > threshold) return
       router.push(routeUp(pathname))
     },
     [pathname, router, canvasEl],
@@ -114,8 +118,8 @@ export default function SceneCanvas({
   return (
     <Canvas
       dpr={tier === 'high' ? [1, 2] : 1}
-      camera={{ position: [0, 0, 14], fov: 50 }}
-      style={{ position: 'fixed', inset: 0 }}
+      camera={{ position: [0, 0, 14], fov: SCENE_FOV }}
+      style={{ position: 'fixed', inset: 0, touchAction: 'none' }}
       onCreated={handleCreated}
       onPointerMissed={handlePointerMissed}
     >

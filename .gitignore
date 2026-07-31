@@ -6,6 +6,7 @@ playwright-report/
 test-results/
 next-env.d.ts
 *.tsbuildinfo
+.playwright-mcp/
 
 # ssh TUI build artifacts
 ssh/internal/content/data/*
