@@ -1,0 +1,38 @@
+app = "vik-run"
+primary_region = "sjc"
+
+[env]
+  SSH_PORT = "2222"
+  HTTP_PORT = "8080"
+  REDIRECT_TARGET = "https://vikram.sh"
+
+# Raw TCP for SSH: external 22 -> internal 2222.
+[[services]]
+  internal_port = 2222
+  protocol = "tcp"
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[services.ports]]
+    port = 22
+
+# Web redirect: Fly terminates TLS, app answers with 301 to vikram.sh.
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+  auto_stop_machines = false
+  auto_start_machines = true
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"
