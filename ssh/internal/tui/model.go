@@ -68,6 +68,11 @@ func (m Model) resized(msg tea.WindowSizeMsg) Model {
 		m = m.showWelcome()
 	} else {
 		m.vp.Width, m.vp.Height = vpW, vpH
+		if m.mode == modeEntries {
+			m = m.refreshViewport()
+		} else {
+			m = m.showWelcome()
+		}
 	}
 	return m
 }
@@ -228,8 +233,9 @@ func (m Model) leftPane() string {
 }
 
 func truncate(s string, n int) string {
-	if len(s) <= n {
+	r := []rune(s)
+	if len(r) <= n {
 		return s
 	}
-	return s[:max(n-1, 1)] + "…"
+	return string(r[:max(n-1, 1)]) + "…"
 }
