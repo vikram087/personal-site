@@ -29,13 +29,7 @@ export function HudChrome({
 
   return (
     <>
-      <nav
-        aria-label="Site controls"
-        style={{
-          position: 'fixed', top: 16, left: 16, zIndex: 30,
-          display: 'flex', gap: 8, pointerEvents: 'auto',
-        }}
-      >
+      <nav aria-label="Site controls" className="hud-nav">
         <button type="button" className="hud-button" onClick={() => setOverlay('about')}>
           Vikram Penumarti
         </button>

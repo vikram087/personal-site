@@ -9,7 +9,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html, body { height: 100%; }
+html, body { height: 100%; overscroll-behavior: none; }
 
 body {
   background: var(--void);
@@ -147,6 +147,16 @@ h1, h2, h3, .display {
 }
 .hud-button:hover, .hud-button:focus-visible { border-color: var(--starlight); }
 
+.hud-nav {
+  position: fixed;
+  top: calc(16px + env(safe-area-inset-top));
+  left: calc(16px + env(safe-area-inset-left));
+  z-index: 30;
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+
 :focus-visible { outline: 1px solid var(--starlight); outline-offset: 3px; }
 
 /* Wayfinding bar — top center, always shows the route out of a view */
@@ -212,7 +222,14 @@ h1, h2, h3, .display {
 
 @media (max-width: 768px) {
   :root { --panel-width: 100vw; }
-  .location-bar { top: auto; bottom: 18px; }
+  /* Compact chrome: both buttons fit one row beside the notch */
+  .hud-button { padding: 6px 10px; font-size: 0.65rem; }
+  /* Full-width panel starts below the fixed hud-nav (16px top + ~28px buttons + 8px gap) */
+  .panel { padding-top: calc(52px + env(safe-area-inset-top)); }
+  .panel-header { padding: 12px 16px 12px; }
+  .panel-body { padding: 16px 16px 32px; padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+  .panel-body .gallery { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .location-bar { top: auto; bottom: calc(18px + env(safe-area-inset-bottom)); }
   .location-bar .esc-hint { display: none; }
   /* Full-screen panel already carries its own back link */
   .location-bar--panel-open { display: none; }

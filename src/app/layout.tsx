@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import type { Viewport } from 'next'
 import { display, body, mono } from './fonts'
 import { SceneRoot } from '@/components/scene/SceneRoot'
 import { buildSceneData } from '@/lib/content/scene-data'
@@ -9,6 +10,13 @@ import { SITE_METADATA } from '@/config/site-metadata'
 import './globals.css'
 
 export const metadata = SITE_METADATA
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#060A12',
+}
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const sceneData = buildSceneData()
