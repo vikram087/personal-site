@@ -13,10 +13,12 @@ export const OVERVIEW_MIN_DISTANCE = 14
 export const OVERVIEW_MAX_DISTANCE = 44
 /** World-units of slack around each destination for its nameplate. */
 export const NAMEPLATE_MARGIN = 1.5
-/** Radius (planet + ring + nameplate) that must fit when a planet is focused. */
-export const FOCUS_FIT_RADIUS = 2.2
+/** Radius that must fit when a planet is focused — derived from what the
+ * current desktop approach already fits: |BASE_FOCUS_OFFSET|·tan(vFov/2) ≈ 1.91.
+ * Keeping it at (not above) that bound is what makes desktop scale exactly 1. */
+export const FOCUS_FIT_RADIUS = 1.9
 /** The cinematic approach offset used by CameraRig at desktop aspect. */
-export const BASE_FOCUS_OFFSET: readonly [number, number, number] = [2, 0.5, 4.25]
+export const BASE_FOCUS_OFFSET: readonly [number, number, number] = [1.7, 0.5, 3.7]
 
 const tanHalfDeg = (deg: number) => Math.tan(((deg / 2) * Math.PI) / 180)
 
