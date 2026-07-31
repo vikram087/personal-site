@@ -34,6 +34,9 @@ var (
 	jsxPaired      = regexp.MustCompile(`(?s)<([A-Z][A-Za-z0-9.]*)(\s[^>]*?)?>.*?</[A-Za-z0-9.]+>`)
 	jsxSelfClosing = regexp.MustCompile(`(?s)<[A-Z][A-Za-z0-9.]*(\s[^>]*?)?/>`)
 	mdImage        = regexp.MustCompile(`!\[[^\]]*\]\([^)]*\)`)
+	// jsxLeftover catches any remaining lone JSX tags (especially closing tags
+	// from nested components that weren't fully matched by jsxPaired).
+	jsxLeftover = regexp.MustCompile(`</?[A-Z][A-Za-z0-9.]*[^>]*>`)
 )
 
 // Parse splits frontmatter from body, decodes the YAML, and strips
@@ -70,5 +73,6 @@ func stripUnrenderable(body string) string {
 	body = jsxPaired.ReplaceAllString(body, "")
 	body = jsxSelfClosing.ReplaceAllString(body, "")
 	body = mdImage.ReplaceAllString(body, "")
+	body = jsxLeftover.ReplaceAllString(body, "")
 	return strings.TrimSpace(body)
 }

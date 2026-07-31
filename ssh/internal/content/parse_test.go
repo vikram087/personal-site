@@ -71,6 +71,43 @@ Closing text.`)
 	}
 }
 
+func TestParseStripsNestedJSXPairs(t *testing.T) {
+	raw := []byte(`---
+title: Nested Components
+summary: Test nested JSX stripping
+---
+
+Opening text here.
+
+<Card>
+  <Badge>New</Badge>
+</Card>
+
+Middle text between components.
+
+<Section>
+  <Title>Heading</Title>
+  <Description>More content</Description>
+</Section>
+
+Closing text here.`)
+
+	e, err := Parse("test/nested", raw)
+	if err != nil {
+		t.Fatalf("Parse: %v", err)
+	}
+	// Verify no angle bracket JSX remnants
+	for _, banned := range []string{"<Card", "</Card>", "<Badge", "</Badge>", "<Section", "</Section>", "<Title", "</Title>", "<Description", "</Description>"} {
+		if strings.Contains(e.Body, banned) {
+			t.Errorf("Body still contains %q:\n%s", banned, e.Body)
+		}
+	}
+	// Verify surrounding prose is preserved
+	if !strings.Contains(e.Body, "Opening text here.") || !strings.Contains(e.Body, "Closing text here.") || !strings.Contains(e.Body, "Middle text between components.") {
+		t.Errorf("surrounding prose lost:\n%s", e.Body)
+	}
+}
+
 func TestParseLinks(t *testing.T) {
 	raw := []byte(`---
 title: This Website
