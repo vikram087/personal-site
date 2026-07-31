@@ -68,6 +68,9 @@ export function SceneRoot({
       <div className="viewport-frame" aria-hidden>
         <span /><span /><span /><span />
       </div>
+      <a className="ssh-hint" href="ssh://vik.run" title="This site, in your terminal">
+        ssh vik.run
+      </a>
       <div style={{ position: 'fixed', inset: 0, zIndex: 10, pointerEvents: 'none' }}>{children}</div>
     </>
   )

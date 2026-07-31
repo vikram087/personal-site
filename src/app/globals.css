@@ -249,3 +249,21 @@ h1, h2, h3, .display {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
+
+/* Cross-link to the terminal version of this site (ssh vik.run) */
+.ssh-hint {
+  position: fixed;
+  right: 36px;
+  bottom: 16px;
+  z-index: 30;
+  pointer-events: auto;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: var(--ghost);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.ssh-hint::before { content: '> '; }
+.ssh-hint:hover, .ssh-hint:focus-visible { color: var(--starlight); }
+@media (max-width: 768px) { .ssh-hint { display: none; } }
