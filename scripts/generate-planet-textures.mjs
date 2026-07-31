@@ -336,7 +336,7 @@ for (const [slug, bake] of Object.entries(planets)) {
   console.log(`baking ${slug}…`)
   const { albedo, height, emissive, normalStrength } = bake()
   await saveWebp(`${slug}-albedo.webp`, albedo, W, H, 82)
-  await saveWebp(`${slug}-normal.webp`, normalMapFromHeight(height, normalStrength), W, H, 90)
+  await saveWebp(`${slug}-normal.webp`, normalMapFromHeight(height, normalStrength), W, H, 75)
   await saveWebp(`${slug}-emissive.webp`, emissive, W, H, 80)
 }
 console.log('baking clouds…')

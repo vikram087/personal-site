@@ -1,40 +1,53 @@
 'use client'
-import { Canvas, type RootState } from '@react-three/fiber'
+import { Canvas, useFrame, type RootState } from '@react-three/fiber'
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { routeUp } from '@/lib/nav'
-import { useTexture } from '@react-three/drei'
+import { useProgress, useTexture } from '@react-three/drei'
 import { Starfield } from '@/components/scene/Starfield'
 import { NebulaBackdrop } from '@/components/scene/NebulaBackdrop'
 import { Effects } from '@/components/scene/Effects'
 import { DestinationField } from '@/components/scene/DestinationField'
 import { CameraRig } from '@/components/scene/CameraRig'
 import { SUN_DIRECTION } from '@/components/scene/PlanetMaterial'
-import { DESTINATIONS } from '@/config/destinations'
 import { SCENE_FOV } from '@/lib/camera-fit'
+import { SCENE_TEXTURE_URLS } from '@/lib/scene-textures'
 import { useSceneStore } from '@/lib/store'
 import type { DestinationNode } from '@/lib/content/scene-data'
 
 // Warm every texture during the loading screen so destination views never
-// pop in behind Suspense.
-const PLANET_TEXTURE_URLS = DESTINATIONS.filter((d) => d.kind === 'planet').flatMap((d) => [
-  `/textures/${d.slug}-albedo.webp`,
-  `/textures/${d.slug}-normal.webp`,
-  `/textures/${d.slug}-emissive.webp`,
-])
-;[...PLANET_TEXTURE_URLS, '/textures/clouds.webp', '/textures/sky.webp'].forEach((url) => {
+// pop in behind Suspense. SceneRoot already started the HTTP fetches in
+// parallel with this chunk's download; this feeds them into drei's cache.
+SCENE_TEXTURE_URLS.forEach((url) => {
   useTexture.preload(url)
 })
 
 // Spec: "WebGL context lost: attempt one recovery, then fall back to index."
 const RESTORE_TIMEOUT_MS = 3000
 
+// Mounts inside the scene Suspense boundary, so its frame callback only runs
+// once every textured sibling has resolved. Frame 1 renders the scene (and
+// compiles shaders); by frame 2 a real frame is on screen and the loading
+// overlay can fade.
+function SceneReadySignal({ onReady }: { onReady?: () => void }) {
+  const frameCountRef = useRef(0)
+  useFrame(() => {
+    frameCountRef.current += 1
+    if (frameCountRef.current === 2) onReady?.()
+  })
+  return null
+}
+
 export default function SceneCanvas({
   sceneData,
   onContextFatal,
+  onReady,
+  onProgress,
 }: {
   sceneData: DestinationNode[]
   onContextFatal?: () => void
+  onReady?: () => void
+  onProgress?: (progress: number) => void
 }) {
   const tier = useSceneStore((s) => s.tier)
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null)
@@ -43,6 +56,13 @@ export default function SceneCanvas({
   const router = useRouter()
   const pathname = usePathname()
   const pointerDownRef = useRef<{ x: number; y: number } | null>(null)
+
+  // Surface texture-load progress (drei's loading manager) to the loading
+  // overlay, which lives outside this chunk.
+  const progress = useProgress((s) => s.progress)
+  useEffect(() => {
+    onProgress?.(progress)
+  }, [progress, onProgress])
 
   // Clicking empty space dismisses the current view one level up (city → orbit
   // → starmap), replacing the old back buttons. onPointerMissed also fires for
@@ -136,6 +156,7 @@ export default function SceneCanvas({
         <NebulaBackdrop />
         <Starfield />
         <DestinationField sceneData={sceneData} />
+        <SceneReadySignal onReady={onReady} />
       </Suspense>
       <CameraRig sceneData={sceneData} />
       <Effects />

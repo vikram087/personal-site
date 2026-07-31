@@ -200,6 +200,20 @@ h1, h2, h3, .display {
 .nameplate { animation: fade-drop-in 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
 
 /* Loading screen */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  background: var(--void);
+  z-index: 40;
+  text-align: center;
+  transition: opacity 0.6s ease;
+}
+.loading-screen.is-done {
+  opacity: 0;
+  pointer-events: none;
+}
 .loading-diamond {
   width: 18px;
   height: 18px;

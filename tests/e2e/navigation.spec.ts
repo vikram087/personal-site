@@ -1,8 +1,16 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
+
+// The loading overlay intentionally blocks input until the scene has drawn
+// its first real frame. Headless software WebGL takes a while to get there.
+async function waitForSceneReady(page: Page) {
+  await expect(page.locator('.loading-screen')).toHaveCount(0, { timeout: 60_000 })
+}
 
 test('director → planet → city → content', async ({ page }) => {
+  test.setTimeout(90_000)
   await page.goto('/')
   await expect(page.locator('canvas')).toBeVisible()
+  await waitForSceneReady(page)
   // Planet/city nameplates sit inside the ambiently-rotating 3D scene, so their
   // screen coordinates never satisfy Playwright's pointer-stability check (the
   // planet keeps a slow auto-rotate even while focused). dispatchEvent('click')
@@ -17,7 +25,7 @@ test('director → planet → city → content', async ({ page }) => {
 test('direct URL to a hobby renders its panel', async ({ page }) => {
   await page.goto('/hobbies/soccer')
   await expect(page.getByRole('heading', { name: 'Soccer' })).toBeVisible()
-  await expect(page.getByText(/first thing I say yes to/i)).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Soccer' }).first()).toBeVisible()
 })
 
 test('blog planet shows the coming-soon panel while empty', async ({ page }) => {
@@ -26,15 +34,19 @@ test('blog planet shows the coming-soon panel while empty', async ({ page }) => 
 })
 
 test('HUD About panel opens from any view', async ({ page }) => {
+  test.setTimeout(90_000)
   await page.goto('/hobbies')
+  await waitForSceneReady(page)
   await page.getByRole('button', { name: /vikram/i }).click()
   await expect(page.getByRole('heading', { name: 'About' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'UC Davis' })).toHaveAttribute('href', '/education')
 })
 
 test('clicking empty space dismisses the view one level up', async ({ page }) => {
+  test.setTimeout(90_000)
   await page.goto('/professional')
   await expect(page.locator('canvas')).toBeVisible()
+  await waitForSceneReady(page)
   // Bottom-left corner: empty starfield, away from nameplates and HUD chrome.
   await page.mouse.click(40, 680)
   await expect(page).toHaveURL(/\/$/)

@@ -1,15 +1,16 @@
-export function LoadingScreen() {
+function clampProgress(value: number): number {
+  return Math.min(100, Math.max(0, Math.round(value)))
+}
+
+export function LoadingScreen({ progress, done = false }: { progress?: number; done?: boolean }) {
   return (
-    <div
-      role="status"
-      style={{
-        position: 'fixed', inset: 0, display: 'grid', placeContent: 'center',
-        background: 'var(--void)', zIndex: 40, textAlign: 'center',
-      }}
-    >
+    <div role="status" className={`loading-screen${done ? ' is-done' : ''}`}>
       <div>
         <div className="loading-diamond" />
-        <p className="kicker loading-text">Establishing transmission…</p>
+        <p className="kicker loading-text">
+          Establishing transmission…
+          {progress !== undefined && ` ${clampProgress(progress)}%`}
+        </p>
       </div>
     </div>
   )

@@ -7,8 +7,12 @@ test.use({ viewport: VIEWPORT })
 const CAMERA_SETTLE_MS = 3500
 
 test('starmap shows every destination nameplate within the viewport', async ({ page }) => {
+  test.setTimeout(90_000)
   await page.goto('/')
-  await expect(page.locator('.nameplate').first()).toBeVisible({ timeout: 15_000 })
+  await expect(page.locator('.nameplate').first()).toBeVisible({ timeout: 60_000 })
+  // The loading overlay unmounts once the scene has drawn its first real
+  // frame — camera settling only meaningfully starts after that.
+  await expect(page.locator('.loading-screen')).toHaveCount(0, { timeout: 60_000 })
   await page.waitForTimeout(CAMERA_SETTLE_MS)
 
   const plates = page.locator('.nameplate')

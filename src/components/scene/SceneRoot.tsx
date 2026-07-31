@@ -6,12 +6,13 @@ import { SceneErrorBoundary } from '@/components/scene/SceneErrorBoundary'
 import { LoadingScreen } from '@/components/hud/LoadingScreen'
 import { LocationBar } from '@/components/hud/LocationBar'
 import { SceneSettings } from '@/components/scene/SceneSettings'
+import { warmSceneTextures } from '@/lib/scene-textures'
 import type { DestinationNode } from '@/lib/content/scene-data'
 
-const SceneCanvas = dynamic(() => import('@/components/scene/SceneCanvas'), {
-  ssr: false,
-  loading: () => <LoadingScreen />,
-})
+const SceneCanvas = dynamic(() => import('@/components/scene/SceneCanvas'), { ssr: false })
+
+// Keep the faded-out overlay mounted until its CSS opacity transition ends.
+const OVERLAY_FADE_MS = 700
 
 function webglSupported(): boolean {
   try {
@@ -41,24 +42,51 @@ export function SceneRoot({
 }) {
   const [webgl, setWebgl] = useState<boolean | null>(null)
   const [contextFatal, setContextFatal] = useState(false)
+  const [sceneReady, setSceneReady] = useState(false)
+  const [overlayGone, setOverlayGone] = useState(false)
+  const [loadProgress, setLoadProgress] = useState<number | undefined>(undefined)
   useEffect(() => setWebgl(webglSupported()), [])
+
+  // Textures are the largest payload (~MBs) and normally only start
+  // downloading after the scene JS chunk arrives and evaluates. Kick their
+  // downloads off here so they run in parallel with the chunk fetch. Gated on
+  // the WebGL check so non-3D devices never pay for them.
+  useEffect(() => {
+    if (webgl === true) warmSceneTextures()
+  }, [webgl])
 
   // Spec: "WebGL context lost: attempt one recovery, then fall back to index."
   // SceneCanvas gives the recovery attempt a bounded window; once it gives up
   // (second loss or restore timeout), it calls this to drop us to the same
   // fallback notice used when WebGL isn't supported at all.
   const handleContextFatal = useCallback(() => setContextFatal(true), [])
+  const handleSceneReady = useCallback(() => setSceneReady(true), [])
+
+  useEffect(() => {
+    if (!sceneReady) return undefined
+    const timer = setTimeout(() => setOverlayGone(true), OVERLAY_FADE_MS)
+    return () => clearTimeout(timer)
+  }, [sceneReady])
 
   const showScene = webgl === true && !contextFatal
+  // One overlay owns the whole load: WebGL probe → chunk download → texture
+  // decode → first rendered frame. It fades once the scene has actually drawn,
+  // so there is never a black gap between "loading" and "scene visible".
+  const showOverlay = webgl === null || (showScene && !overlayGone)
 
   return (
     <>
       <SceneSettings />
-      {webgl === null && <LoadingScreen />}
+      {showOverlay && <LoadingScreen progress={loadProgress} done={sceneReady} />}
       {showScene && (
         <SceneErrorBoundary fallback={fallbackNotice}>
-          <Suspense fallback={<LoadingScreen />}>
-            <SceneCanvas sceneData={sceneData} onContextFatal={handleContextFatal} />
+          <Suspense fallback={null}>
+            <SceneCanvas
+              sceneData={sceneData}
+              onContextFatal={handleContextFatal}
+              onReady={handleSceneReady}
+              onProgress={setLoadProgress}
+            />
           </Suspense>
         </SceneErrorBoundary>
       )}
