@@ -43,3 +43,21 @@ test('header buttons do not overlap the panel title on a content route', async (
     navBox!.y + navBox!.height > titleBox!.y
   expect(intersects, 'hud nav must not overlap panel title').toBe(false)
 })
+
+test('panel close button is right-aligned, tappable, and routes one level up', async ({ page }) => {
+  await page.goto('/professional/work')
+  const close = page.getByRole('button', { name: 'Close Work' })
+  await expect(close).toBeVisible()
+
+  const closeBox = await close.boundingBox()
+  const titleBox = await page.locator('.panel-header h1').boundingBox()
+  expect(closeBox).not.toBeNull()
+  expect(titleBox).not.toBeNull()
+  expect(closeBox!.height, 'close tap height').toBeGreaterThanOrEqual(44)
+  // Right-justified: button sits at the header's right edge, past the title.
+  expect(closeBox!.x, 'close sits right of the title').toBeGreaterThan(titleBox!.x + titleBox!.width)
+  expect(closeBox!.x + closeBox!.width, 'close near right edge').toBeGreaterThan(VIEWPORT.width - 60)
+
+  await close.click()
+  await expect(page).toHaveURL(/\/professional$/)
+})
