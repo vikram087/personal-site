@@ -14,21 +14,35 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	"github.com/charmbracelet/wish/activeterm"
 	bm "github.com/charmbracelet/wish/bubbletea"
 	"github.com/charmbracelet/wish/logging"
 	wishrecover "github.com/charmbracelet/wish/recover"
+	"github.com/muesli/termenv"
 
 	"vik.run/ssh/internal/content"
 	"vik.run/ssh/internal/httpredirect"
 	"vik.run/ssh/internal/tui"
 )
 
-const shutdownGrace = 10 * time.Second
+const (
+	shutdownGrace = 10 * time.Second
+	idleTimeout   = 30 * time.Minute
+	maxTimeout    = 2 * time.Hour
+)
 
 func main() {
+	// lipgloss's default renderer detects color support from this
+	// process's own stdout, which isn't a TTY when running under Fly
+	// (or any daemonized host) — it would fall back to the Ascii
+	// profile and every SSH session would render monochrome. Sessions
+	// actually render over the SSH connection, not this process's
+	// stdout, so force a color-capable profile explicitly.
+	lipgloss.SetColorProfile(termenv.ANSI256)
+
 	sshAddr := ":" + envOr("SSH_PORT", "2222")
 	httpAddr := ":" + envOr("HTTP_PORT", "8080")
 	target := envOr("REDIRECT_TARGET", "https://vikram.sh")
@@ -40,6 +54,8 @@ func main() {
 
 	srv, err := wish.NewServer(append(hostKeyOption(),
 		wish.WithAddress(sshAddr),
+		wish.WithIdleTimeout(idleTimeout),
+		wish.WithMaxTimeout(maxTimeout),
 		wish.WithMiddleware(
 			wishrecover.Middleware(
 				bm.Middleware(teaHandler(sections)),
@@ -55,7 +71,7 @@ func main() {
 	httpSrv := httpredirect.Server(httpAddr, target)
 
 	done := make(chan os.Signal, 1)
-	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
 
 	// httpErr signals the shared shutdown path if the HTTP listener
 	// fails outside of a deliberate Shutdown, so a dead HTTP server
