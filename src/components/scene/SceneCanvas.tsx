@@ -1,6 +1,8 @@
 'use client'
 import { Canvas, type RootState } from '@react-three/fiber'
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { routeUp } from '@/lib/nav'
 import { useTexture } from '@react-three/drei'
 import { Starfield } from '@/components/scene/Starfield'
 import { NebulaBackdrop } from '@/components/scene/NebulaBackdrop'
@@ -37,9 +39,39 @@ export default function SceneCanvas({
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null)
   const lossCountRef = useRef(0)
   const restoreTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const router = useRouter()
+  const pathname = usePathname()
+  const pointerDownRef = useRef<{ x: number; y: number } | null>(null)
+
+  // Clicking empty space dismisses the current view one level up (city → orbit
+  // → starmap), replacing the old back buttons. onPointerMissed also fires for
+  // clicks on DOM overlays inside the canvas container (nameplates), so only
+  // clicks landing on the canvas itself count. A movement threshold keeps
+  // drag-rotating the scene from being read as a dismissal click.
+  const handlePointerMissed = useCallback(
+    (e: MouseEvent) => {
+      if (pathname === '/' || e.target !== canvasEl) return
+      const down = pointerDownRef.current
+      if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 8) return
+      router.push(routeUp(pathname))
+    },
+    [pathname, router, canvasEl],
+  )
+
+  useEffect(() => {
+    if (!canvasEl) return undefined
+    const onPointerDown = (e: PointerEvent) => {
+      pointerDownRef.current = { x: e.clientX, y: e.clientY }
+    }
+    canvasEl.addEventListener('pointerdown', onPointerDown)
+    return () => canvasEl.removeEventListener('pointerdown', onPointerDown)
+  }, [canvasEl])
 
   const handleCreated = useCallback((state: RootState) => {
     state.gl.toneMappingExposure = 1.18
+    // Star points must never swallow pointer rays, or clicks on empty space
+    // would not reach onPointerMissed (which handles dismiss-to-parent).
+    state.raycaster.params.Points.threshold = 0
     setCanvasEl(state.gl.domElement)
   }, [])
 
@@ -85,6 +117,7 @@ export default function SceneCanvas({
       camera={{ position: [0, 0, 14], fov: 50 }}
       style={{ position: 'fixed', inset: 0 }}
       onCreated={handleCreated}
+      onPointerMissed={handlePointerMissed}
     >
       <color attach="background" args={['#060A12']} />
       <ambientLight intensity={0.16} color="#8FA3C8" />

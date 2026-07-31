@@ -7,7 +7,7 @@ import { Panel } from '@/components/hud/Panel'
 export function BlogTopicPanel({ topic }: { topic: string }) {
   const posts = loadCollection('blog', blogFrontmatter).filter((p) => p.frontmatter.topic === topic)
   return (
-    <Panel accent={accentOf('blog')} kicker="Blog · Topic" title={topic} backHref="/blog">
+    <Panel accent={accentOf('blog')} kicker="Blog · Topic" title={topic}>
       <ul style={{ listStyle: 'none' }}>
         {posts.map((p) => (
           <li key={p.slug} style={{ marginBottom: '1.5rem' }}>

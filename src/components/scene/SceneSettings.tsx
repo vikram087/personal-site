@@ -2,6 +2,7 @@
 import { useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { pickTier } from '@/lib/device-tier'
+import { routeUp } from '@/lib/nav'
 import { useSceneStore } from '@/lib/store'
 
 export function SceneSettings() {
@@ -23,8 +24,7 @@ export function SceneSettings() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape' || pathname === '/') return
-      const up = pathname.split('/').filter(Boolean).slice(0, -1).join('/')
-      router.push(up ? `/${up}` : '/')
+      router.push(routeUp(pathname))
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)

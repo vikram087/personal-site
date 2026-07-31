@@ -22,7 +22,9 @@ export function NebulaBackdrop() {
   })
 
   return (
-    <mesh ref={mesh}>
+    // The sky sphere surrounds the camera, so without this every pointer ray
+    // "hits" it and the canvas' onPointerMissed dismissal never fires.
+    <mesh ref={mesh} raycast={() => null}>
       <sphereGeometry args={[85, 48, 48]} />
       <meshBasicMaterial map={sky} side={THREE.BackSide} depthWrite={false} fog={false} />
     </mesh>

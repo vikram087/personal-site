@@ -15,12 +15,12 @@ describe('Panel', () => {
     expect(screen.getByRole('heading', { name: 'Work' })).toBeInTheDocument()
     expect(screen.getByText('Body text')).toBeInTheDocument()
   })
-  it('renders a back link when backHref is given', () => {
+  it('does not render a back link', () => {
     render(
-      <Panel accent="#F5A83C" kicker="k" title="t" backHref="/professional">
+      <Panel accent="#F5A83C" kicker="k" title="t">
         <p>x</p>
       </Panel>,
     )
-    expect(screen.getByRole('link', { name: '← Back' })).toHaveAttribute('href', '/professional')
+    expect(screen.queryByRole('link', { name: '← Back' })).not.toBeInTheDocument()
   })
 })

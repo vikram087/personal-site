@@ -18,7 +18,7 @@ function parseFile<T>(filePath: string, label: string, schema: ZodType<T, ZodTyp
   return { frontmatter: parsed.data, body: content.trim() }
 }
 
-export function loadCollection<T extends { date: Date; draft: boolean }>(
+export function loadCollection<T extends { date?: Date; draft: boolean }>(
   dir: string,
   schema: ZodType<T, ZodTypeDef, unknown>,
   root: string = defaultRoot(),
@@ -33,7 +33,7 @@ export function loadCollection<T extends { date: Date; draft: boolean }>(
       ...parseFile(path.join(collectionDir, file), `${dir}/${file}`, schema),
     }))
     .filter((e) => !e.frontmatter.draft)
-    .sort((a, b) => b.frontmatter.date.getTime() - a.frontmatter.date.getTime())
+    .sort((a, b) => (b.frontmatter.date?.getTime() ?? 0) - (a.frontmatter.date?.getTime() ?? 0))
 }
 
 export function loadPage(name: string, root: string = defaultRoot()): { frontmatter: PageFrontmatter; body: string } {

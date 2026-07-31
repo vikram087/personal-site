@@ -19,6 +19,9 @@ describe('baseFrontmatter', () => {
   it('rejects missing title', () => {
     expect(() => baseFrontmatter.parse({ summary: 'S', date: '2026-01-05' })).toThrow()
   })
+  it('allows omitting date', () => {
+    expect(baseFrontmatter.parse({ title: 'T', summary: 'S' }).date).toBeUndefined()
+  })
 })
 
 describe('blogFrontmatter', () => {
@@ -28,6 +31,9 @@ describe('blogFrontmatter', () => {
   })
   it('rejects topics that are not url-safe slugs', () => {
     expect(() => blogFrontmatter.parse({ ...valid, topic: 'My Life' })).toThrow()
+  })
+  it('still requires date for posts', () => {
+    expect(() => blogFrontmatter.parse({ title: 'T', summary: 'S', topic: 'dev' })).toThrow()
   })
 })
 

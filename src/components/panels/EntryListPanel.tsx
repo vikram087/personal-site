@@ -17,7 +17,7 @@ export function EntryListPanel({ city }: { city: keyof typeof CITY_META }) {
     WorkFrontmatter | ProjectFrontmatter | BaseFrontmatter
   >[]
   return (
-    <Panel accent={accentOf('professional')} kicker={`Professional · ${meta.title}`} title={meta.title} backHref="/professional">
+    <Panel accent={accentOf('professional')} kicker={`Professional · ${meta.title}`} title={meta.title}>
       {entries.map((e) => {
         const fm = e.frontmatter
         return (

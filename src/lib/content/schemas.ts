@@ -3,11 +3,12 @@ import { z } from 'zod'
 export const baseFrontmatter = z.object({
   title: z.string().min(1),
   summary: z.string().min(1),
-  date: z.coerce.date(),
+  date: z.coerce.date().optional(),
   draft: z.boolean().default(false),
 })
 
 export const blogFrontmatter = baseFrontmatter.extend({
+  date: z.coerce.date(),
   topic: z
     .string()
     .regex(/^[a-z0-9-]+$/, 'topic must be a url-safe slug (lowercase letters, digits, dashes)'),

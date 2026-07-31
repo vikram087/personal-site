@@ -31,7 +31,7 @@ export default async function PlanetPage({ params }: { params: Promise<{ planet:
   if (planet === 'education') return <EducationPanel />
   if (planet === 'blog' && loadCollection('blog', blogFrontmatter).length === 0) {
     return (
-      <ComingSoonPanel planet="blog" kicker="Blog" title="Transmissions coming soon" backHref="/">
+      <ComingSoonPanel planet="blog" kicker="Blog" title="Transmissions coming soon">
         <p>
           Nothing published yet — the first transmissions are being drafted.
           Check back soon.

@@ -15,7 +15,6 @@ export function PostPanel({ topic, slug }: { topic: string; slug: string }) {
       accent={accentOf('blog')}
       kicker={`Blog · ${topic} · ${post.frontmatter.date.toISOString().slice(0, 10)}`}
       title={post.frontmatter.title}
-      backHref={`/blog/${topic}`}
     >
       <Mdx source={post.body} />
     </Panel>

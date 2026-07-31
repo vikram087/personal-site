@@ -41,7 +41,7 @@ export default async function PostPage({ params }: { params: Promise<{ topic: st
   )
   if (!exists) {
     return (
-      <ComingSoonPanel planet="blog" kicker="Blog" title="Transmissions coming soon" backHref="/">
+      <ComingSoonPanel planet="blog" kicker="Blog" title="Transmissions coming soon">
         <p>Nothing published yet — the first transmissions are being drafted.</p>
       </ComingSoonPanel>
     )

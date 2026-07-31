@@ -195,7 +195,9 @@ export function Planet({
         ) : (
           <>
             <PlanetSurface node={node} materialRef={material} onSelect={onSelect} hoverHandlers={hoverHandlers} />
-            <mesh scale={1.16}>
+            {/* raycast disabled: the BackSide shell would otherwise swallow
+                near-planet rays and block onPointerMissed dismissal clicks. */}
+            <mesh scale={1.16} raycast={() => null}>
               <sphereGeometry args={[1.4, 48, 48]} />
               {/* @ts-expect-error extended element */}
               <atmosphereMaterial

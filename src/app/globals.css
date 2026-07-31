@@ -111,6 +111,26 @@ h1, h2, h3, .display {
 }
 .panel-body p { margin-bottom: 1em; max-width: 62ch; }
 .panel-body a { color: var(--accent, var(--starlight)); }
+.panel-body img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 0 1em;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.panel-body .gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+  margin: 0 0 1em;
+}
+.panel-body .gallery img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  margin: 0;
+}
 
 .hud-button {
   pointer-events: auto;

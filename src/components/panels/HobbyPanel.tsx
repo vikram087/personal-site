@@ -9,7 +9,7 @@ export function HobbyPanel({ slug }: { slug: string }) {
   const entry = loadCollection('hobbies', hobbyFrontmatter).find((e) => e.slug === slug)
   if (!entry) notFound()
   return (
-    <Panel accent={accentOf('hobbies')} kicker="Hobbies" title={entry.frontmatter.title} backHref="/hobbies">
+    <Panel accent={accentOf('hobbies')} kicker="Hobbies" title={entry.frontmatter.title}>
       <Mdx source={entry.body} />
     </Panel>
   )

@@ -17,7 +17,7 @@ test('director → planet → city → content', async ({ page }) => {
 test('direct URL to a hobby renders its panel', async ({ page }) => {
   await page.goto('/hobbies/soccer')
   await expect(page.getByRole('heading', { name: 'Soccer' })).toBeVisible()
-  await expect(page.getByText('Homestead High School')).toBeVisible()
+  await expect(page.getByText(/first thing I say yes to/i)).toBeVisible()
 })
 
 test('blog planet shows the coming-soon panel while empty', async ({ page }) => {
@@ -25,11 +25,19 @@ test('blog planet shows the coming-soon panel while empty', async ({ page }) => 
   await expect(page.getByRole('heading', { name: 'Transmissions coming soon' })).toBeVisible()
 })
 
-test('HUD About tabs and Contact work from any view', async ({ page }) => {
+test('HUD About panel opens from any view', async ({ page }) => {
   await page.goto('/hobbies')
   await page.getByRole('button', { name: /vikram/i }).click()
-  await page.getByRole('tab', { name: 'Now' }).click()
   await expect(page.getByRole('heading', { name: 'About' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'UC Davis' })).toHaveAttribute('href', '/education')
+})
+
+test('clicking empty space dismisses the view one level up', async ({ page }) => {
+  await page.goto('/professional')
+  await expect(page.locator('canvas')).toBeVisible()
+  // Bottom-left corner: empty starfield, away from nameplates and HUD chrome.
+  await page.mouse.click(40, 680)
+  await expect(page).toHaveURL(/\/$/)
 })
 
 test('keyboard-only: tab to a planet nameplate and enter', async ({ page }) => {

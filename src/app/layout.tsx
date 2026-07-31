@@ -15,8 +15,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const hud = (
     <HudChrome
       about={<Mdx source={loadPage('about').body} />}
-      now={<Mdx source={loadPage('now').body} />}
-      uses={<Mdx source={loadPage('uses').body} />}
       contact={<Mdx source={loadPage('contact').body} />}
     />
   )
