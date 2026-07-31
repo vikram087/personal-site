@@ -78,6 +78,19 @@ describe('overviewDistance', () => {
     expect(Number.isFinite(d)).toBe(true)
     expect(d).toBeLessThanOrEqual(OVERVIEW_MAX_DISTANCE)
   })
+
+  it('stays fit (with slack) even where the max clamp bites (360x800 Androids)', () => {
+    const aspect = 360 / 800
+    const d = overviewDistance(POSITIONS, SCENE_FOV, aspect, { width: 360, height: 800 })
+    expect(d).toBeLessThanOrEqual(OVERVIEW_MAX_DISTANCE)
+    // Even clamped, every anchor must leave >= half the plate budget of slack
+    // thanks to the world margin + pixel reservation combined.
+    const tanH = Math.tan(((SCENE_FOV / 2) * Math.PI) / 180) * aspect
+    for (const [x, , z] of POSITIONS) {
+      const anchorFrac = Math.abs(x) / ((d - z) * tanH)
+      expect(anchorFrac, `anchor for x=${x}`).toBeLessThanOrEqual(1 - (NAMEPLATE_HALF_WIDTH_PX / (360 / 2)))
+    }
+  })
 })
 
 describe('focusOffsetScale', () => {
