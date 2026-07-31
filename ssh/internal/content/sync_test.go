@@ -44,6 +44,9 @@ func TestSyncDirWipesStaleFiles(t *testing.T) {
 	if _, err := os.Stat(filepath.Join(dst, "stale.mdx")); !os.IsNotExist(err) {
 		t.Error("stale file should be removed")
 	}
+	if _, err := os.Stat(filepath.Join(dst, "fresh.mdx")); err != nil {
+		t.Errorf("fresh.mdx should be copied: %v", err)
+	}
 }
 
 func mustWrite(t *testing.T, path, body string) {
