@@ -6,3 +6,8 @@ playwright-report/
 test-results/
 next-env.d.ts
 *.tsbuildinfo
+
+# ssh TUI build artifacts
+ssh/internal/content/data/*
+!ssh/internal/content/data/.gitkeep
+ssh/.data/
