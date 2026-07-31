@@ -48,18 +48,12 @@ export function HudChrome({
       )}
       <AnimatePresence>
         {overlay === 'about' && (
-          <Panel accent="var(--starlight)" kicker="Guardian file" title="About" zIndex={26}>
-            <button type="button" className="hud-button" onClick={() => setOverlay(null)} style={{ position: 'absolute', top: 24, right: 24 }}>
-              Close
-            </button>
+          <Panel accent="var(--starlight)" kicker="Guardian file" title="About" zIndex={26} onClose={() => setOverlay(null)}>
             {about}
           </Panel>
         )}
         {overlay === 'contact' && (
-          <Panel accent="var(--starlight)" kicker="Open a channel" title="Contact" zIndex={26}>
-            <button type="button" className="hud-button" onClick={() => setOverlay(null)} style={{ position: 'absolute', top: 24, right: 24 }}>
-              Close
-            </button>
+          <Panel accent="var(--starlight)" kicker="Open a channel" title="Contact" zIndex={26} onClose={() => setOverlay(null)}>
             {contact}
           </Panel>
         )}

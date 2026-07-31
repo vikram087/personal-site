@@ -107,6 +107,8 @@ h1, h2, h3, .display {
   pointer-events: auto;
 }
 .panel-header { padding: 28px 32px 16px; border-bottom: 1px solid var(--line); }
+.panel-header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.panel-close { min-width: 44px; min-height: 44px; flex-shrink: 0; font-size: 0.8rem; line-height: 1; }
 .panel-body {
   padding: 24px 32px 48px;
   overflow-y: auto;
