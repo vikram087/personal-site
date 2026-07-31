@@ -14,12 +14,18 @@ func Handler(target string) http.Handler {
 	})
 }
 
-// ListenAndServe blocks serving the redirect on addr.
-func ListenAndServe(addr, target string) error {
-	srv := &http.Server{
+// Server returns an *http.Server configured to 301-redirect every
+// request on addr to target. The caller owns its lifecycle (e.g. to
+// call Shutdown for graceful termination alongside other listeners).
+func Server(addr, target string) *http.Server {
+	return &http.Server{
 		Addr:              addr,
 		Handler:           Handler(target),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
-	return srv.ListenAndServe()
+}
+
+// ListenAndServe blocks serving the redirect on addr.
+func ListenAndServe(addr, target string) error {
+	return Server(addr, target).ListenAndServe()
 }

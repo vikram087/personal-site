@@ -52,16 +52,25 @@ func main() {
 		log.Fatalf("creating ssh server: %v", err)
 	}
 
-	go func() {
-		log.Printf("http redirect %s -> %s", httpAddr, target)
-		if err := httpredirect.ListenAndServe(httpAddr, target); err != nil &&
-			!errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("http server: %v", err)
-		}
-	}()
+	httpSrv := httpredirect.Server(httpAddr, target)
 
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	// httpErr signals the shared shutdown path if the HTTP listener
+	// fails outside of a deliberate Shutdown, so a dead HTTP server
+	// can't leave live SSH sessions running forever (and vice versa,
+	// SIGINT/SIGTERM drains both listeners together).
+	httpErr := make(chan struct{}, 1)
+	go func() {
+		log.Printf("http redirect %s -> %s", httpAddr, target)
+		if err := httpSrv.ListenAndServe(); err != nil &&
+			!errors.Is(err, http.ErrServerClosed) {
+			log.Printf("http server: %v", err)
+			httpErr <- struct{}{}
+		}
+	}()
+
 	go func() {
 		log.Printf("ssh server listening on %s", sshAddr)
 		if err := srv.ListenAndServe(); err != nil &&
@@ -70,12 +79,18 @@ func main() {
 		}
 	}()
 
-	<-done
+	select {
+	case <-done:
+	case <-httpErr:
+	}
 	log.Println("shutting down")
 	ctx, cancel := context.WithTimeout(context.Background(), shutdownGrace)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil && !errors.Is(err, ssh.ErrServerClosed) {
-		log.Printf("shutdown: %v", err)
+		log.Printf("ssh shutdown: %v", err)
+	}
+	if err := httpSrv.Shutdown(ctx); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Printf("http shutdown: %v", err)
 	}
 }
 
