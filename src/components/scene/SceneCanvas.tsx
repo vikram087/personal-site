@@ -53,7 +53,10 @@ export default function SceneCanvas({
     (e: MouseEvent) => {
       if (pathname === '/' || e.target !== canvasEl) return
       const down = pointerDownRef.current
-      if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 8) return
+      // Touch drags wobble more than mouse drags — give coarse pointers a
+      // larger tap threshold so drag-rotation is never read as a dismissal.
+      const threshold = window.matchMedia('(pointer: coarse)').matches ? 12 : 8
+      if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > threshold) return
       router.push(routeUp(pathname))
     },
     [pathname, router, canvasEl],
@@ -116,7 +119,7 @@ export default function SceneCanvas({
     <Canvas
       dpr={tier === 'high' ? [1, 2] : 1}
       camera={{ position: [0, 0, 14], fov: SCENE_FOV }}
-      style={{ position: 'fixed', inset: 0 }}
+      style={{ position: 'fixed', inset: 0, touchAction: 'none' }}
       onCreated={handleCreated}
       onPointerMissed={handlePointerMissed}
     >

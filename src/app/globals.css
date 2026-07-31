@@ -84,6 +84,11 @@ h1, h2, h3, .display {
 }
 .nameplate--marker .descriptor { color: #B9C2D4; }
 
+/* Coarse pointers get >=44px tap targets without shifting layout */
+@media (pointer: coarse) {
+  .nameplate { padding: 14px 16px; margin: -8px -2px; }
+}
+
 /* Panel frame */
 .panel {
   position: fixed;

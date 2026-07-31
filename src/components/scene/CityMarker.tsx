@@ -35,9 +35,14 @@ export function CityMarker({
 
   return (
     <group position={position}>
-      <mesh ref={diamond} rotation={[0, 0, Math.PI / 4]} onClick={(e) => { e.stopPropagation(); onSelect() }}>
+      <mesh ref={diamond} rotation={[0, 0, Math.PI / 4]}>
         <planeGeometry args={[0.09, 0.09]} />
         <meshBasicMaterial color={accent} />
+      </mesh>
+      {/* Invisible, larger hit area — the visual diamond is a tiny touch target */}
+      <mesh rotation={[0, 0, Math.PI / 4]} onClick={(e) => { e.stopPropagation(); onSelect() }}>
+        <planeGeometry args={[0.24, 0.24]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       <Html position={[0, 0.18, 0]} center zIndexRange={[5, 0]}>
         <Nameplate name={city.name} descriptor={city.descriptor} accent={accent} variant="marker" onSelect={onSelect} />
