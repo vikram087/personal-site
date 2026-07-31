@@ -21,7 +21,7 @@
     "gray-matter": "^4.0.3",
     "maath": "^0.10.8",
     "next": "^15.3.0",
-    "next-mdx-remote": "^5.0.0",
+    "next-mdx-remote": "^6.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.175.0",
