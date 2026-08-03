@@ -69,11 +69,8 @@ func (m Model) resized(msg tea.WindowSizeMsg) Model {
 		m = m.showWelcome()
 	} else {
 		m.vp.Width, m.vp.Height = vpW, vpH
-		if m.mode == modeEntries {
-			m = m.refreshViewport()
-		} else {
-			m = m.refreshViewport()
-		}
+		// Re-render for the new size; in section mode this shows the highlighted section's landing (the welcome screen is initial-view only).
+		m = m.refreshViewport()
 	}
 	return m
 }

@@ -135,3 +135,13 @@ func TestEntryHidesArtOnShortTerminal(t *testing.T) {
 		t.Errorf("entry title missing on short terminal:\n%s", view)
 	}
 }
+
+func TestLandingUsesSingularEntryNoun(t *testing.T) {
+	m := viewAt(t, 80, 24)
+	m = press(m, tea.KeyMsg{Type: tea.KeyDown})
+	m = press(m, tea.KeyMsg{Type: tea.KeyUp}) // back to ABOUT (1 entry)
+	view := m.View()
+	if !strings.Contains(view, "1 entry · enter to open") {
+		t.Errorf("landing should use singular noun for 1 entry:\n%s", view)
+	}
+}
