@@ -137,16 +137,19 @@ func (m Model) refreshViewport() Model {
 }
 
 func (m Model) showWelcome() Model {
-	welcome := strings.Join([]string{
-		"",
+	parts := []string{""}
+	if artFits(welcomeArt, m.vp.Width, m.vp.Height) {
+		parts = append(parts, dimStyle.Render(welcomeArt), "")
+	}
+	parts = append(parts,
 		headerStyle.Render("  VIKRAM PENUMARTI"),
 		dimStyle.Render("  software engineer · uc davis cs"),
 		"",
 		itemStyle.Render("  ↑↓ to browse, enter to open a section."),
 		"",
 		dimStyle.Render("  prefer a browser? https://vikram.sh"),
-	}, "\n")
-	m.vp.SetContent(welcome)
+	)
+	m.vp.SetContent(strings.Join(parts, "\n"))
 	m.vp.GotoTop()
 	return m
 }
