@@ -72,7 +72,7 @@ func (m Model) resized(msg tea.WindowSizeMsg) Model {
 		if m.mode == modeEntries {
 			m = m.refreshViewport()
 		} else {
-			m = m.showWelcome()
+			m = m.refreshViewport()
 		}
 	}
 	return m

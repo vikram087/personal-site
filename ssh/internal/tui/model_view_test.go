@@ -99,3 +99,13 @@ func TestLandingHidesArtOnShortTerminal(t *testing.T) {
 		t.Errorf("landing text missing on short terminal:\n%s", view)
 	}
 }
+
+func TestResizeKeepsSectionLanding(t *testing.T) {
+	m := press(viewAt(t, 80, 24), tea.KeyMsg{Type: tea.KeyDown})
+	var mdl tea.Model = m
+	mdl, _ = mdl.Update(tea.WindowSizeMsg{Width: 90, Height: 30})
+	view := mdl.(Model).View()
+	if !strings.Contains(view, "2 entries · enter to open") {
+		t.Errorf("resize should keep the section landing:\n%s", view)
+	}
+}
