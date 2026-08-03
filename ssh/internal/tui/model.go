@@ -103,7 +103,7 @@ func (m Model) keyPressed(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "esc":
 		if m.mode == modeEntries {
 			m.mode, m.cursor = modeSections, m.section
-			m = m.showWelcome()
+			m = m.showLanding()
 		}
 		return m, nil
 	default:
@@ -124,7 +124,7 @@ func (m Model) listLen() int {
 // refreshViewport re-renders the right pane for the current selection.
 func (m Model) refreshViewport() Model {
 	if m.mode != modeEntries {
-		return m
+		return m.showLanding()
 	}
 	entries := m.sections[m.section].Entries
 	if len(entries) == 0 {
@@ -150,6 +150,28 @@ func (m Model) showWelcome() Model {
 		dimStyle.Render("  prefer a browser? https://vikram.sh"),
 	)
 	m.vp.SetContent(strings.Join(parts, "\n"))
+	m.vp.GotoTop()
+	return m
+}
+
+// showLanding renders the highlighted section's art, title, and entry
+// count in the right pane while browsing the section list.
+func (m Model) showLanding() Model {
+	if len(m.sections) == 0 {
+		return m.showWelcome()
+	}
+	s := m.sections[m.cursor]
+	var b strings.Builder
+	if art := sectionArt[s.Title]; artFits(art, m.vp.Width, m.vp.Height) {
+		b.WriteString(dimStyle.Render(art) + "\n\n")
+	}
+	b.WriteString(headerStyle.Render("  "+s.Title) + "\n")
+	noun := "entries"
+	if len(s.Entries) == 1 {
+		noun = "entry"
+	}
+	b.WriteString(dimStyle.Render(fmt.Sprintf("  %d %s · enter to open", len(s.Entries), noun)))
+	m.vp.SetContent(b.String())
 	m.vp.GotoTop()
 	return m
 }

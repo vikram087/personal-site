@@ -63,3 +63,39 @@ func TestWelcomeHidesArtOnShortTerminal(t *testing.T) {
 		t.Errorf("welcome text missing on short terminal:\n%s", view)
 	}
 }
+
+// workMarker is a line unique to the WORK briefcase art.
+const workMarker = "|__|__________|__|"
+
+func TestCursorMoveShowsSectionLanding(t *testing.T) {
+	m := press(viewAt(t, 80, 24), tea.KeyMsg{Type: tea.KeyDown})
+	view := m.View()
+	if !strings.Contains(view, workMarker) {
+		t.Errorf("landing view missing WORK art:\n%s", view)
+	}
+	if !strings.Contains(view, "2 entries · enter to open") {
+		t.Errorf("landing view missing entry count:\n%s", view)
+	}
+}
+
+func TestEscReturnsToSectionLanding(t *testing.T) {
+	m := viewAt(t, 80, 24)
+	m = press(m, tea.KeyMsg{Type: tea.KeyDown})  // highlight WORK
+	m = press(m, tea.KeyMsg{Type: tea.KeyEnter}) // open WORK
+	m = press(m, tea.KeyMsg{Type: tea.KeyEsc})   // back
+	view := m.View()
+	if !strings.Contains(view, "2 entries · enter to open") {
+		t.Errorf("esc should land on WORK section landing:\n%s", view)
+	}
+}
+
+func TestLandingHidesArtOnShortTerminal(t *testing.T) {
+	m := press(viewAt(t, 60, 15), tea.KeyMsg{Type: tea.KeyDown})
+	view := m.View()
+	if strings.Contains(view, workMarker) {
+		t.Errorf("short-terminal landing should hide art:\n%s", view)
+	}
+	if !strings.Contains(view, "2 entries · enter to open") {
+		t.Errorf("landing text missing on short terminal:\n%s", view)
+	}
+}
