@@ -109,3 +109,29 @@ func TestResizeKeepsSectionLanding(t *testing.T) {
 		t.Errorf("resize should keep the section landing:\n%s", view)
 	}
 }
+
+func TestEntryShowsSectionArt(t *testing.T) {
+	m := viewAt(t, 80, 24)
+	m = press(m, tea.KeyMsg{Type: tea.KeyDown})
+	m = press(m, tea.KeyMsg{Type: tea.KeyEnter})
+	view := m.View()
+	if !strings.Contains(view, workMarker) {
+		t.Errorf("entry view missing WORK art:\n%s", view)
+	}
+	if !strings.Contains(view, "ScoreData") {
+		t.Errorf("entry view missing entry title:\n%s", view)
+	}
+}
+
+func TestEntryHidesArtOnShortTerminal(t *testing.T) {
+	m := viewAt(t, 60, 15)
+	m = press(m, tea.KeyMsg{Type: tea.KeyDown})
+	m = press(m, tea.KeyMsg{Type: tea.KeyEnter})
+	view := m.View()
+	if strings.Contains(view, workMarker) {
+		t.Errorf("short-terminal entry should hide art:\n%s", view)
+	}
+	if !strings.Contains(view, "ScoreData") {
+		t.Errorf("entry title missing on short terminal:\n%s", view)
+	}
+}

@@ -131,7 +131,8 @@ func (m Model) refreshViewport() Model {
 		m.vp.SetContent(dimStyle.Render("nothing here yet"))
 		return m
 	}
-	m.vp.SetContent(renderEntry(entries[m.cursor], m.vp.Width))
+	m.vp.SetContent(renderEntry(entries[m.cursor],
+		sectionArt[m.sections[m.section].Title], m.vp.Width, m.vp.Height))
 	m.vp.GotoTop()
 	return m
 }
@@ -176,10 +177,14 @@ func (m Model) showLanding() Model {
 	return m
 }
 
-// renderEntry renders an entry's metadata header plus its glamour-styled
-// markdown body, falling back to raw markdown if glamour fails.
-func renderEntry(e content.Entry, width int) string {
+// renderEntry renders the section's art (when it fits) above an entry's
+// metadata header and glamour-styled markdown body, falling back to raw
+// markdown if glamour fails.
+func renderEntry(e content.Entry, art string, width, height int) string {
 	var b strings.Builder
+	if artFits(art, width, height) {
+		b.WriteString(dimStyle.Render(art) + "\n\n")
+	}
 	b.WriteString(headerStyle.Render(e.Meta.Title) + "\n")
 	if line := metaLine(e.Meta); line != "" {
 		b.WriteString(dimStyle.Render(line) + "\n")
